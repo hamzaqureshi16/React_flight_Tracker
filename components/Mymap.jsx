@@ -17,7 +17,7 @@ export default function MapComponent() {
   useEffect(() => {
     const fetchData = () => {
       axios
-        .get('https://opensky-network.org/api/states/all?lamin=22.366332&lomin=59.990530&lamax=38.355442&lomax=75.997067')
+        .get('https://opensky-network.org/api/states/all')
         .then((response) => {
           const data = response.data.states;
           console.log(data);
@@ -100,7 +100,7 @@ export default function MapComponent() {
   }, [markers]);
  
   return (
-    <div style={{ width: '1280px', height: '650px' }}>
+    <div style={{ width: '1280px', height: '650px', border:'2px solid black', borderRadius:"20px" }}>
       <div ref={mapRef} className="rounded-4" style={{ width: '100%', height: '100%' }} />
     </div>
   );
