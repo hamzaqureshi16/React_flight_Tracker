@@ -22,14 +22,30 @@ export default function MapComponent() {
           const data = response.data.states;
           console.log(data);
           const newMarkers = data.map((item) => {
-            const [longitude, latitude] = [item[5], item[6]];
+            const [longitude, latitude, heading] = [item[5], item[6], item[10]];
             const marker = new Overlay({
               position: fromLonLat([longitude, latitude]),
               positioning: 'center-center',
               element: document.createElement('div'),
               stopEvent: false,
             });
-            marker.getElement().innerHTML = `<img src=${markerIcon} style="width: 30px; height: 30px;"> <label>${item[1]}</label>`; // Add the label to the marker element
+            const img = document.createElement('img');
+            img.src = markerIcon;
+            img.style.width = '30px';
+            img.style.height = '30px';
+            img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+            const label = document.createElement('label');
+            label.textContent = item[1];
+            marker.getElement().appendChild(img);
+            marker.getElement().appendChild(label);
+            img.src = markerIcon;
+            img.style.width = '30px';
+            img.style.height = '30px';
+            img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+            // const label = document.createElement('label');
+            label.textContent = item[1];
+            marker.getElement().appendChild(img);
+            marker.getElement().appendChild(label);
             return marker;
           });
           setMarkers(newMarkers);
