@@ -57,7 +57,7 @@ export default function MapComponent() {
 
     
     fetchData();
-    const interval = setInterval(fetchData, 10000); // Call the API every 10 seconds
+    const interval = setInterval(fetchData, 25000); // Call the API every 25 seconds
     return () => clearInterval(interval);
   }, []);
 
