@@ -8,6 +8,7 @@ import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import axios from 'axios';
 import markerIcon from '../src/assets/plane.jpg'; // Custom marker icon image
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function MapComponent() {
   const [markers, setMarkers] = useState([]); // State to hold the marker overlays
@@ -15,10 +16,18 @@ export default function MapComponent() {
   const [center, setCenter] = useState(fromLonLat([73.0479, 33.6844])); // State to hold the center
 
   useEffect(() => {
-    const fetchData = () => {
-      axios
-        .get('https://opensky-network.org/api/states/all')
-        .then((response) => {
+    const fetchData = async () => {
+      const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
+      const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
+      const credentials = `${username}:${password}`;
+      const basicAuthHeader = `Basic ${btoa(credentials)}`;
+
+      const url = 'https://opensky-network.org/api/states/all';
+      await axios.get(url, {
+        headers: {
+          Authorization: basicAuthHeader,
+        },
+      }).then((response) => {
           const data = response.data.states;
           console.log(data);
           const newMarkers = data.map((item) => {
@@ -51,6 +60,8 @@ export default function MapComponent() {
           setMarkers(newMarkers);
         })
         .catch((error) => {
+          toast.error('Error fetching data from OpenSky API');
+
           console.log(error);
         });
     };
@@ -100,9 +111,12 @@ export default function MapComponent() {
   }, [markers]);
  
   return (
-    <div style={{ width: '1280px', height: '650px', border:'2px solid black', borderRadius:"20px" }}>
-      <div ref={mapRef} className="rounded-4" style={{ width: '100%', height: '100%' }} />
+    <>
+    
+    <div style={{ width: '1280px', height: '650px', border:'2px solid black', borderRadius:"20px" }}>  
+      <div ref={mapRef} className="rounded-4" style={{ width: '100%', height: '100%', borderRadius:'20px' }} />
     </div>
+    </>
   );
 
 }
