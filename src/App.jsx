@@ -7,6 +7,11 @@ import MyMap from '../components/Mymap'
 
 function App() { 
 
+  useEffect(() => {
+    document.title = "Flight Tracker"
+    console.log(import.meta.env)
+  }, [])
+
 
   return (
     <Fragment>

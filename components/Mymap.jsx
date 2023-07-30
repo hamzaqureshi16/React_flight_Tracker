@@ -16,6 +16,11 @@ export default function MapComponent() {
   const [center, setCenter] = useState(fromLonLat([73.0479, 33.6844])); // State to hold the center
 
   useEffect(() => {
+    console.log(import.meta.env)
+  }
+  ,[])
+
+  useEffect(() => {
     const fetchData = async () => {
       const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
       const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
