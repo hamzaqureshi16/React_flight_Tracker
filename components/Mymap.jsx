@@ -7,7 +7,7 @@ import OSM from 'ol/source/OSM';
 import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import axios from 'axios';
-import markerIcon from '../src/assets/plane.jpg'; // Custom marker icon image
+import markerIcon from '../src/assets/plane.png'; // Custom marker icon image
 import { toast, ToastContainer } from 'react-toastify';
 
 export default function MapComponent() {
