@@ -118,9 +118,9 @@ export default function MapComponent() {
   return (
     <>
     
-    <div style={{ width: '1280px', height: '650px', border:'2px solid black', borderRadius:"20px" }}>  
-      <div ref={mapRef} className="rounded-4" style={{ width: '100%', height: '100%', borderRadius:'20px' }} />
-    </div>
+    {/* <div style={{ width: '80vw', height: '80vh', border:'2px solid black', borderRadius:"20px" }}>   */}
+      <div ref={mapRef} className="d-flex  rounded-4" style={{padding:"0px",margin:'0px', width: '100vw', height: '100vh', borderRadius:'20px' }} />
+    {/* </div> */}
     </>
   );
 
