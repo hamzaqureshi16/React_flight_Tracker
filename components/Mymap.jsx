@@ -14,11 +14,8 @@ export default function MapComponent() {
   const [markers, setMarkers] = useState([]); // State to hold the marker overlays
   const [zoomLevel, setZoomLevel] = useState(5); // State to hold the zoom level
   const [center, setCenter] = useState(fromLonLat([73.0479, 33.6844])); // State to hold the center
+  
 
-  useEffect(() => {
-    console.log(import.meta.env)
-  }
-  ,[])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +31,6 @@ export default function MapComponent() {
         },
       }).then((response) => {
           const data = response.data.states;
-          console.log(data);
           const newMarkers = data.map((item) => {
             const [longitude, latitude, heading] = [item[5], item[6], item[10]];
             const marker = new Overlay({
