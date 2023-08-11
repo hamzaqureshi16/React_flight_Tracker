@@ -23,6 +23,9 @@ export default function MapComponent() {
     console.log("extent",extent)
   },[extent])
 
+  useEffect(()=>{
+    fetchData();
+  },[])
 
   const fetchData = useCallback(async () => {
     const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
