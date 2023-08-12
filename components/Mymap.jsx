@@ -17,8 +17,8 @@ export default function MapComponent() {
   const [zoomLevel, setZoomLevel] = useState(5); // State to hold the zoom level
   const [center, setCenter] = useState(fromLonLat([73.0479, 33.6844])); // State to hold the center
   const [extent, setExtent] = useState([ 43.604540625000006, 17.786665521455063, 102.491259375, 47.11223396185369 ]);
-  
-
+  const [queryType, setQueryType] = useState('icao24'); 
+  const [query, setQuery] = useState('');
   useEffect(()=>{
     console.log("extent",extent)
   },[extent])
@@ -130,7 +130,7 @@ export default function MapComponent() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, import.meta.env.MODE === 'development' ? 25000 : 25000);
   
     return () => clearInterval(interval);
   }, [extent, fetchData]);
@@ -177,13 +177,80 @@ export default function MapComponent() {
       map.setTarget(null);
     };
   }, [markers]);
+
+  const handleSearch = (e) =>{
+    e.preventDefault();
+
+  }
  
   return (
     <>
-    
-    {/* <div style={{ width: '80vw', height: '80vh', border:'2px solid black', borderRadius:"20px" }}>   */}
-      <div ref={mapRef} className="d-flex  rounded-4" style={{padding:"0px",margin:'0px', width: '100vw', height: '100vh', borderRadius:'20px' }} />
-    {/* </div> */}
+      <div className="search-container" style={{ 
+        position: 'absolute', 
+        top: '10px', 
+        left: '10px', 
+        zIndex: '1', 
+        backgroundColor:'transparent' 
+        }}
+      >
+        
+        <select 
+          name="querytype" 
+          id="querytype" 
+          className='rounded-5 p-2' 
+          onChange={(e)=>{
+          setQueryType(e.target.value)
+          }}
+        >
+
+          <option 
+            value={0}
+          >
+            ICAO24
+          </option>
+
+          <option 
+            value={1}
+          >
+            Callsign
+          </option>
+
+          <option 
+            value={2}
+          >
+            Registration
+          </option>
+
+        </select>
+
+        <input 
+          type="text" 
+          placeholder="Search..." 
+          className='rounded-5 p-2' 
+          value={query} 
+          onChange={setQuery}
+        />
+
+        <input 
+          type="button" 
+          value="Search" 
+          className='rounded-5 p-2' 
+          onClick={handleSearch}
+        />
+
+      </div>
+
+      <div 
+        ref={mapRef} 
+        className="d-flex rounded-4" 
+        style={{ 
+          padding: "0px", 
+          margin: '0px', 
+          width: '100vw', 
+          height: '100vh', 
+          borderRadius: '20px' 
+        }} 
+      />
     </>
   );
 
