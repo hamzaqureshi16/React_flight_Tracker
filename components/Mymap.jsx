@@ -130,7 +130,7 @@ export default function MapComponent() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
-    }, 25000);
+    }, 5000);
   
     return () => clearInterval(interval);
   }, [extent, fetchData]);
