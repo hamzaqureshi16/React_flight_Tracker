@@ -20,7 +20,6 @@ export default function MapComponent() {
   const [queryType, setQueryType] = useState(0); 
   const [query, setQuery] = useState('');
 
-
   useEffect(()=>{
     console.log("extent",extent)
   },[extent])
@@ -36,65 +35,70 @@ export default function MapComponent() {
     const basicAuthHeader = `Basic ${btoa(credentials)}`;
     console.log('api call')
     const url = `https://opensky-network.org/api/states/all?lomin=${extent[0]}&lomax=${extent[2]}&lamin=${extent[1]}&lamax=${extent[3]}`;
-    await axios.get(url, {
-      headers: {
-        Authorization: basicAuthHeader,
-      },
-    }).then((response) => {
-        const data = response.data.states;
-        console.log(data)
-        const newMarkers = data.map((item) => {
-          const [longitude, latitude, heading] = [item[5], item[6], item[10]];
-          const marker = new Overlay({
-            position: fromLonLat([longitude, latitude]),
-            positioning: 'center-center',
-            element: document.createElement('div'),
-            stopEvent: false,
-          });
-          const img = document.createElement('img');
-          img.src = markerIcon;
-          img.style.width = '30px';
-          img.style.height = '30px';
-          img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
-          const label = document.createElement('label');
-          label.textContent = item[1];
-          marker.getElement().appendChild(img);
-          marker.getElement().appendChild(label);
-          img.src = markerIcon;
-          img.style.width = '30px';
-          img.style.height = '30px';
-          img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
-          // const label = document.createElement('label');
-          label.textContent = `${item[1]}`;
-
-          //make an icao label
-          const icaoLabel = document.createElement('label');
-          icaoLabel.textContent = `ICAO: ${item[0]}`;
-          icaoLabel.style.display = 'none';
-          marker.getElement().appendChild(icaoLabel);
-          
-          
-
-          marker.getElement().onmouseover = function () {
-            icaoLabel.style.display = 'block';
-          };
-          marker.getElement().onmouseout = function () {
+    if(query === ''){
+      await axios.get(url, {
+        headers: {
+          Authorization: basicAuthHeader,
+        },
+      }).then((response) => {
+          const data = response.data.states;
+          console.log(data)
+          const newMarkers = data.map((item) => {
+            const [longitude, latitude, heading] = [item[5], item[6], item[10]];
+            const marker = new Overlay({
+              position: fromLonLat([longitude, latitude]),
+              positioning: 'center-center',
+              element: document.createElement('div'),
+              stopEvent: false,
+            });
+            const img = document.createElement('img');
+            img.src = markerIcon;
+            img.style.width = '30px';
+            img.style.height = '30px';
+            img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+            const label = document.createElement('label');
+            label.textContent = item[1];
+            marker.getElement().appendChild(img);
+            marker.getElement().appendChild(label);
+            img.src = markerIcon;
+            img.style.width = '30px';
+            img.style.height = '30px';
+            img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+            // const label = document.createElement('label');
+            label.textContent = `${item[1]}`;
+  
+            //make an icao label
+            const icaoLabel = document.createElement('label');
+            icaoLabel.textContent = `ICAO: ${item[0]}`;
             icaoLabel.style.display = 'none';
-          };
-
-
-          marker.getElement().appendChild(img);
-          marker.getElement().appendChild(label);
-          return marker;
+            marker.getElement().appendChild(icaoLabel);
+            
+            
+  
+            marker.getElement().onmouseover = function () {
+              icaoLabel.style.display = 'block';
+            };
+            marker.getElement().onmouseout = function () {
+              icaoLabel.style.display = 'none';
+            };
+  
+  
+            marker.getElement().appendChild(img);
+            marker.getElement().appendChild(label);
+            return marker;
+          });
+          setMarkers(newMarkers);
+        })
+        .catch((error) => {
+          toast.error('Error fetching data from OpenSky API');
+  
+          console.log(error);
         });
-        setMarkers(newMarkers);
-      })
-      .catch((error) => {
-        toast.error('Error fetching data from OpenSky API');
-
-        console.log(error);
-      });
-  }, [extent]);
+    }
+    else{
+        handleSearch();
+    }
+  }, [extent, query]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -147,9 +151,8 @@ export default function MapComponent() {
     };
   }, [markers]);
 
-  const handleSearch = async (e) =>{
+  const handleSearch = async () =>{
 
-    e.preventDefault();
     console.log('in handle search')
     const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
     const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
@@ -189,6 +192,16 @@ export default function MapComponent() {
           Vertical Rate: ${result[11]} m/s 
           Callsign: ${result[1]}
           `;
+
+          label.style.display = 'none';
+
+          marker.getElement().onmouseover = function () {
+            label.style.display = 'block';
+          };
+          marker.getElement().onmouseout = function () {
+            label.style.display = 'none';
+          };
+
           marker.getElement().appendChild(img);
           marker.getElement().appendChild(label);
           img.src = markerIcon;
@@ -202,7 +215,6 @@ export default function MapComponent() {
 
           setMarkers([marker]);
           setCenter(fromLonLat([longitude, latitude]));
-          setZoomLevel(10);
       }
     })
     .catch((error) => {
