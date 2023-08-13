@@ -218,7 +218,7 @@ export default function MapComponent() {
  
   return (
     <>
-      <div className="search-container" style={{ 
+      <div className="search-container  " style={{ 
         position: 'absolute', 
         top: '10px', 
         left: '10px',
@@ -231,7 +231,7 @@ export default function MapComponent() {
         <select 
           name="querytype" 
           id="querytype" 
-          className='rounded-5 p-2' 
+          className='rounded-5 p-2 col-3 col-md-2 m-1' 
           onChange={(e)=>{
           setQueryType(e.target.value)
           }}
@@ -256,8 +256,8 @@ export default function MapComponent() {
 
         <input 
           type="text" 
-          placeholder="Search..." 
-          className='rounded-5 p-2' 
+          placeholder="Search... " 
+          className='rounded-5 p-2 col-6 col-md-3 m-1' 
           value={query} 
           onChange={(e)=>{
             setQuery(e.target.value)
@@ -267,14 +267,14 @@ export default function MapComponent() {
         <input 
           type="button" 
           value="Search" 
-          className='rounded-5 p-2' 
+          className='rounded-5 p-2 col-5 col-md-2 m-1' 
           onClick={handleSearch}
         />
 
       <input 
         type='button'
         value='Clear Search'
-        className='rounded-5 p-2'
+        className='rounded-5 p-2 col-4 col-md-2 m-1'
         onClick={()=>{
           setQuery('')
           setQueryType(0)
