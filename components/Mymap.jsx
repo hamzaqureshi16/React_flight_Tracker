@@ -19,6 +19,8 @@ export default function MapComponent() {
   const [extent, setExtent] = useState([ 43.604540625000006, 17.786665521455063, 102.491259375, 47.11223396185369 ]);
   const [queryType, setQueryType] = useState('icao24'); 
   const [query, setQuery] = useState('');
+
+
   useEffect(()=>{
     console.log("extent",extent)
   },[extent])
@@ -178,17 +180,76 @@ export default function MapComponent() {
     };
   }, [markers]);
 
-  const handleSearch = (e) =>{
+  const handleSearch = async (e) =>{
+
     e.preventDefault();
+    console.log('in handle search')
+    const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
+    const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
+    const credentials = `${username}:${password}`;
+    const basicAuthHeader = `Basic ${btoa(credentials)}`;
+    await axios.get('https://opensky-network.org/api/states/all',{
+      headers: {
+        Authorization: basicAuthHeader,
+      },
+    }).then((response) => {
+      let data = response.data.states;
+
+      let result = data.find((item)=>{
+        return item[queryType] === query
+      }
+      )
+      console.log(result)
+
+      if(result){
+        const [longitude, latitude, heading] = [result[5], result[6], result[10]];
+          const marker = new Overlay({
+            position: fromLonLat([longitude, latitude]),
+            positioning: 'center-center',
+            element: document.createElement('div'),
+            stopEvent: false,
+          });
+          const img = document.createElement('img');
+          img.src = markerIcon;
+          img.style.width = '30px';
+          img.style.height = '30px';
+          img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+          const label = document.createElement('label');
+          label.textContent = result[1];
+          marker.getElement().appendChild(img);
+          marker.getElement().appendChild(label);
+          img.src = markerIcon;
+          img.style.width = '30px';
+          img.style.height = '30px';
+          img.style.transform = `rotate(${heading}deg)`; // Rotate the image based on the heading value
+          // const label = document.createElement('label');
+          label.textContent = result[1];
+          marker.getElement().appendChild(img);
+          marker.getElement().appendChild(label);
+
+          setMarkers([marker]);
+          setCenter(fromLonLat([longitude, latitude]));
+          setZoomLevel(10);
+      }
+    })
+    .catch((error) => {
+      console.log('Error fetching data from OpenSky API');
+
+      console.log(error);
+    }
+    )
+
 
   }
+
  
   return (
     <>
       <div className="search-container" style={{ 
         position: 'absolute', 
         top: '10px', 
-        left: '10px', 
+        left: '10px',
+        marginLeft:'2vw', 
         zIndex: '1', 
         backgroundColor:'transparent' 
         }}
@@ -201,6 +262,7 @@ export default function MapComponent() {
           onChange={(e)=>{
           setQueryType(e.target.value)
           }}
+          defaultValue={0}
         >
 
           <option 
@@ -212,14 +274,10 @@ export default function MapComponent() {
           <option 
             value={1}
           >
-            Callsign
+            Callsign(not working currently)
           </option>
 
-          <option 
-            value={2}
-          >
-            Registration
-          </option>
+          
 
         </select>
 
@@ -228,7 +286,9 @@ export default function MapComponent() {
           placeholder="Search..." 
           className='rounded-5 p-2' 
           value={query} 
-          onChange={setQuery}
+          onChange={(e)=>{
+            setQuery(e.target.value)
+          }}
         />
 
         <input 
@@ -236,6 +296,19 @@ export default function MapComponent() {
           value="Search" 
           className='rounded-5 p-2' 
           onClick={handleSearch}
+        />
+
+      <input 
+        type='button'
+        value='Clear Search'
+        className='rounded-5 p-2'
+        onClick={()=>{
+          setQuery('')
+          setQueryType(0)
+          setMarkers([])
+          setExtent(extent);
+        }}
+
         />
 
       </div>
