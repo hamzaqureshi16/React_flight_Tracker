@@ -21,7 +21,9 @@ export default function MapComponent() {
   const [query, setQuery] = useState('');
 
   useEffect(()=>{
-    console.log("extent",extent)
+    if(import.meta.env.MODE === 'development'){
+      console.log("extent",extent)
+    }
   },[extent])
 
   useEffect(()=>{
@@ -33,7 +35,6 @@ export default function MapComponent() {
     const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
     const credentials = `${username}:${password}`;
     const basicAuthHeader = `Basic ${btoa(credentials)}`;
-    console.log('api call')
     const url = `https://opensky-network.org/api/states/all?lomin=${extent[0]}&lomax=${extent[2]}&lamin=${extent[1]}&lamax=${extent[3]}`;
     if(query === ''){
       await axios.get(url, {
@@ -42,7 +43,9 @@ export default function MapComponent() {
         },
       }).then((response) => {
           const data = response.data.states;
-          console.log(data)
+          if(import.meta.env.MODE === 'development'){
+            console.log(data)
+          }
           const newMarkers = data.map((item) => {
             const [longitude, latitude, heading] = [item[5], item[6], item[10]];
             const marker = new Overlay({
@@ -152,8 +155,6 @@ export default function MapComponent() {
   }, [markers]);
 
   const handleSearch = async () =>{
-
-    console.log('in handle search')
     const username = `${import.meta.env.VITE_OPENSKY_USERNAME}`;
     const password = `${import.meta.env.VITE_OPENSKY_PASSWORD}}`;
     const credentials = `${username}:${password}`;
@@ -169,7 +170,9 @@ export default function MapComponent() {
         return item[queryType] === query
       }
       )
-      console.log(result)
+      if(import.meta.env.MODE === 'development'){
+        console.log(result)
+      }
 
       if(result){
         const [longitude, latitude, heading] = [result[5], result[6], result[10]];
@@ -239,7 +242,6 @@ export default function MapComponent() {
         backgroundColor:'transparent' 
         }}
       >
-        
         <select 
           name="querytype" 
           id="querytype" 

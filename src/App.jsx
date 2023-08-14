@@ -9,13 +9,16 @@ function App() {
 
   useEffect(() => {
     document.title = "Flight Tracker" 
-    const link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-      const link = document.createElement('link');
-      link.rel = 'icon';
-
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
+     //set window icon
+     const link = document.querySelector("link[rel~='icon']");
+     if (!link) {
+       const link = document.createElement('link');
+       link.rel = 'icon';
+       link.href = plane;
+       document.head.appendChild(link);
+     }else{
+       link.href = plane;
+     }
 
 
   }, [])
